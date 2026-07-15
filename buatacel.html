@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejutaan Khusus Dari Ica Buat Acel!</title>
+    <!-- Script Efek Ledakan Kertas Confetti -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+
+        body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #ffe5ec 0%, #ffb3c6 100%);
+    display: flex;
+    justify-content: center;
+    /* Dua baris di bawah ini wajib ditulis seperti ini agar kado kembali ke tengah */
+    align-items: center; 
+    overflow-y: auto;
+    min-height: 100vh;
+    margin: 0;
+    scroll-behavior: smooth; 
+
+        }
+
+        /* --- LAYAR AWAL: KOTAK KADO --- */
+        #layar-kado {
+            text-align: center;
+            transition: all 0.5s ease;
+            z-index: 20;
+        }
+        .teks-petunjuk {
+            color: hsl(329, 100%, 65%);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: denyut 1.5s infinite;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .kotak-kado {
+            font-size: 130px;
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        .kotak-kado:hover {
+            transform: scale(1.2) rotate(8deg);
+        }
+
+        /* --- LAYAR KEDUA: KARTU UTAMA DENGAN ANIMASI DARI ATAS KE BAWAH --- */
+        #layar-kartu {
+            display: none;
+            opacity: 0;
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+            transition: opacity 0.6s ease;
+        
+            /* Memicu semua isi kartu bergerak meluncur dari atas ke bawah */
+            animation: meluncurBawah 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* --- SUSUNAN 3 FOTO BERJAJAR --- */
+        .container-foto {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px auto;
+        }
+        .foto-teman {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff4d6d;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            transition: transform 0.3s;
+        }
+        .foto-teman:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- ANIMASI BALON TERBANG BULAT --- */
+        #area-balon {
+    display: none;
+    /* UBAH BARIS DI BAWAH INI MENJADI FIXED */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 5;
+    pointer-events: none;
+}
+
+        .balon {
+            position: absolute;
+            bottom: -150px;
+            width: 55px;
+            height: 70px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            animation: terbang 10s linear infinite;
+        }
+        .balon::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 26px;
+            width: 2px;
+            height: 12px;
+            background-color: #999;
+        }
+        .balon:nth-child(1) { left: 10%; background-color: #ff4d6d; animation-duration: 8s; }
+        .balon:nth-child(2) { left: 25%; background-color: #ffb703; animation-duration: 11s; animation-delay: 1.5s; }
+        .balon:nth-child(3) { left: 45%; background-color: #8ecae6; animation-duration: 9s; animation-delay: 3s; }
+        .balon:nth-child(4) { left: 70%; background-color: #a2d2ff; animation-duration: 12s; animation-delay: 0.5s; }
+        .balon:nth-child(5) { left: 85%; background-color: #e0aaff; animation-duration: 10s; animation-delay: 2s; }
+        .balon:nth-child(6) { left: 35%; background-color: #00f5d4; animation-duration: 9s; animation-delay: 1s; }
+        .balon:nth-child(7) { left: 60%; background-color: #ff9f1c; animation-duration: 11s; animation-delay: 3s; }
+
+        /* Komponen Konten Teks */
+        h1 { color: #ff4d91; font-size: 26px; margin-top: 10px; }
+        p { color: #4a4a4a; font-size: 16px; line-height: 1.6; }
+
+        .tombol-musik {
+            background-color: hwb(327 11% 27%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px hsla(331, 100%, 65%, 0.879);
+            transition: all 0.3s;
+        }
+        .tombol-musik:hover { background-color: #ff758f; transform: scale(1.05); }
+
+        /* --- KODE LOGIKA ANIMASI GERAKAN --- */
+        @keyframes denyut {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        /* Rumus animasi meluncur lancar dari atas ke bawah */
+        @keyframes meluncurBawah {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes terbang {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-120vh) rotate(30deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ANIMASI BALON -->
+    <div id="area-balon">
+        <div class="balon"></div>
+        <div class="balon"></div>
+        <div class="balon"></div>
+        <div class="balon"></div>
+        <div class="balon"></div>
+        <div class="balon"></div>
+        <div class="balon"></div>
+    </div>
+
+    <!-- TAMPILAN 1: KADO -->
+    <div id="layar-kado">
+        <div class="teks-petunjuk">Ada kado untukmu! Klik untuk buka 🎁</div>
+        <div class="kotak-kado" onclick="bukaKado()">🎁</div>
+    </div>
+
+    <!-- TAMPILAN 2: KARTU KOTAK UTAMA -->
+    <div id="layar-kartu">
+        <div class="kartu-kotak">
+            <div style="font-size: 45px;">🎂🎉🥳</div>
+            
+            <!-- TEMPAT 3 FOTO BERJAJAR -->
+            <div class="container-foto">
+                <!-- Ganti nama file foto ke-1, ke-2, dan ke-3 milik Anda di sini -->
+                <img src="acel.jpeg" alt="Foto 1" class="foto-teman">
+                <img src="fotoacel.jpg.jpeg" alt="Foto 2" class="foto-teman">
+                <img src="ACEL2.jpeg" alt="Foto 3" class="foto-teman">
+            </div>
+            
+            <!-- KONTEN TEKS YANG IKUT MELUNCUR -->
+            <h1>Selamat Ulang Tahun, ACHEL SAYANG!!</h1>
+            <p>Semoga di usia yang baru ini kamu selalu diberikan kesehatan, kebahagiaan, dan semua impianmu bisa segera terwujud.
+                Maap yaa editannya jelek soalnya baru belajar hehe dan ini ica edit sendiri khusus buat achel tersayang dari lodik tercintaa🥳 
+                <p>Selamat ulang tahun untuk salah satu orang paling berharga dalam hidupnya ica! Di hari yang luar biasa ini, ica tidak punya kado mewah, tapi ica punya jutaan doa baik yang tulus untuk acel tersayang. Semoga di usia acel yang ke 21 ini, Allah selalu melimpahkan kesehatan yang luar biasa, kebahagiaan yang tidak pernah putus, kedamaian hati, dan kelancaran dalam setiap urusan serta impian yang sedang acel kejar saat ini.</p>
+
+<p>ica cuma mau bilang terima kasih banyak untuk semuanya. Terima kasih sudah menjadi sahabat yang luar biasa dari gontor sampai sekarang, menjadi pendengar yang sangat sabar saat ica banyak mengeluh dan yapping hehe, dan selalu menjadi orang yang bisa ica andalkan di kala dunia ica sedang tidak baik-baik saja. bisa dapat teman seperti acel itu tidak mudah sangat susah (soalnya suka cool2 gitu haha), dan ica merasa sangat beruntung bisa berteman sejauh ini dengan acel tersayang🥹🫂</p>
+
+<p>Ingat ya, apa pun rintangan yang akan acel hadapi di depan nanti, jangan pernah merasa sendirian. acel punya ica yang akan selalu siap sedia membantu dan mendukung acel dari belakang. Jangan pernah lelah untuk menjadi orang baik, teruslah bersinar dengan cara acel sendiri, dan nikmati setiap proses perjalanan hidupmu.</p>
+
+<p>Sekali lagi, selamat ulang tahun, ya! Semoga semua air mata kesedihanmu di tahun lalu digantikan dengan tawa bahagia yang paling keras di tahun ini. Pokoknya, yang terbaik untukmu! Jangan lupa traktirannya pas di bekasii yaaa ditunggu, hahaha. dengerin musiknya sampai habis!</p>
+
+<p>ini lagunya ica cari di youtube dan ica gatau ini lagunya acel suka atau tidak soalnya lagunya LYKN banyak hiksss pokoknya lagu ini ica dapat soalnya ica taunya acel suka william hehe pokoknya acel harus dengerin ampe selesai yaa!!</p>
+
+<p>UNTUK TERAKHIR INI ICA BIKIN SENDIRI DENGAN USAHA ICA TIDAK ADA BANTUAN SIAPAPUN!!!! KALO GA PERCAYA TANYA SAMA UMI ICA GA MINTA TOLONG JAKI ATAU AL ATAU INFOR LAIN. ITUPUN ICA SEMPAT MINTA LINK KODE AKHIR KE JAKI TAPI ICA GA JADI PAKE SOALNYA ICA HARUS BISA USAHA DENGAN DIRI ICA SENDIRI BUAT BIKIN INI SOALNYA KHUSUS BUAT ACEL.  JADI INI KHUSUS ICA BUAT UNTUK ACHEL OKEII DAN JANGAN BOSAN2 YAA TEMENAN SAMA ICAAA YANG LUCUUU DAN IMUTT INII🤗</p>
+
+<p>mungkin ini aja yang bisa ica kasi buat acel maap yaa kalo ga sejago orang2 tapi ica percaya diri kok soalnya ini buatan ica sendiri hehe🥰</p>
+
+<p>ICA SAYANG ACHEL💗</p>
+
+<p>LOVE YOUU SO MUCHH BESTIKUUUU TERSAYANGG💗</p>
+        </p>
+    
+            </p>
+            <p>Dari: <strong>ICHA LUCU DAN IMUT</strong></p>
+            
+            <button class="tombol-musik" onclick="aturMusik()">
+                <span id="ikon-musik">🎵</span> <span id="teks-musik">Matikan Musik</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- REFRESH PLAYAUDIO (Memakai link musik internet super aman) -->
+    <audio id="lagu-ultah" loop>
+        <source src="lagu acel.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function bukaKado() {
+            const lagu = document.getElementById('lagu-ultah');
+            if (lagu) {
+                lagu.muted = false;
+                lagu.volume = 1.0;
+                lagu.play().catch(e => console.log("Audio diblokir browser:", e));
+            }
+
+            document.getElementById('layar-kado').style.display = 'none';
+            document.getElementById('area-balon').style.display = 'block';
+            
+            const kartu = document.getElementById('layar-kartu');
+            kartu.style.display = 'block';
+            setTimeout(() => { kartu.style.opacity = '1'; }, 50);
+
+            // Ledakan kertas confetti pesta
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+
+        function aturMusik() {
+            const lagu = document.getElementById('lagu-ultah');
+            const ikon = document.getElementById('ikon-musik');
+            const teks = document.getElementById('teks-musik');
+            if (lagu.paused) {
+                lagu.play();
+                ikon.innerText = "🎵";
+                teks.innerText = "Matikan Musik";
+            } else {
+                lagu.pause();
+                ikon.innerText = "🔇";
+                teks.innerText = "Putar Musik";
+            }
+        }
+    </script>
+</body>
+</html>
